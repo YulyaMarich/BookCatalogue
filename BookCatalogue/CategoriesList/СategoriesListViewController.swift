@@ -18,6 +18,7 @@ class СategoriesListViewController: UICollectionViewController {
     private func setUpNavigationController() {
         navigationItem.title = "The New York Times"
         navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
     }
     
     private func setUpCollectionView() {
@@ -53,5 +54,15 @@ class СategoriesListViewController: UICollectionViewController {
         cell.setUpContentView()
         
         return cell
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let layout = UICollectionViewFlowLayout()
+        let viewModel = BooksListViewModel()
+        let booksListVC = BooksListViewController(viewModel: viewModel)
+        
+        booksListVC.collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        
+        navigationController?.pushViewController(booksListVC, animated: true)
     }
 }
