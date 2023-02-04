@@ -15,9 +15,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let _ = (scene as? UIWindowScene) else { return }
         guard let windowScene = (scene as? UIWindowScene) else { return }
+        let layout = UICollectionViewFlowLayout()
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.windowScene = windowScene
-        window?.rootViewController = СategoriesListViewController()
+        window?.rootViewController = UINavigationController(rootViewController:СategoriesListViewController(collectionViewLayout: layout))
         window?.makeKeyAndVisible()
     }
 
