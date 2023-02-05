@@ -6,9 +6,9 @@
 //
 
 import UIKit
+import Alamofire
 
 class СategoriesListViewController: UIViewController {
-    
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -17,10 +17,24 @@ class СategoriesListViewController: UIViewController {
         return collectionView
     }()
     
+    private var viewModel: CategoriesListViewModelProtocol
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNavigationController()
-        setUpCollectionView()
+        viewModel.fetch { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.setUpCollectionView()
+        }
+    }
+    
+    init(viewModel: CategoriesListViewModelProtocol = CategoriesListViewModel()) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     private func setUpNavigationController() {
@@ -51,8 +65,8 @@ class СategoriesListViewController: UIViewController {
         let spacing = minimumInteritemSpacing * (itemsAtRow - 1)
         let availableWidth = screenWidth - sectionInserts.left - sectionInserts.right - spacing
         let itemWidth = availableWidth / itemsAtRow
-    
         let layout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
+        
         layout.minimumInteritemSpacing = minimumInteritemSpacing
         layout.minimumLineSpacing = 10
         layout.itemSize = CGSize(width: itemWidth, height: itemWidth + 10)
@@ -63,12 +77,14 @@ class СategoriesListViewController: UIViewController {
 extension СategoriesListViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return viewModel.data?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCell",
                                                       for: indexPath) as! CategoryCollectionViewCell
+        let category = viewModel.data?[indexPath.item]
+        cell.viewModel = CategoryCollectionViewCellModel(data: category)
         cell.setUpContentView()
         return cell
     }
