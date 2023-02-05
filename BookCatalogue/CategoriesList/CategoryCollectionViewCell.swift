@@ -33,6 +33,8 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         return divider
     }()
     
+    var viewModel: CategoryCollectionViewCellModelProtocol?
+    
     func setUpContentView() {
         contentView.backgroundColor = .white
         contentView.layer.cornerRadius = 4
@@ -41,7 +43,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         setUpCategoryInfoStack()
         makeShadow()
         divider.backgroundColor = UIColor(red: 0.353, green: 0.294, blue: 0.267, alpha: 1)
-        categoryNameLabel.text = "Combined Print and E-Book Nonfiction"
+        categoryNameLabel.text = viewModel?.listName
         categoryNameLabel.font = UIFont.systemFont(ofSize: 27, weight: .heavy)
         categoryNameLabel.lineBreakMode = .byWordWrapping
         categoryNameLabel.numberOfLines = 0
