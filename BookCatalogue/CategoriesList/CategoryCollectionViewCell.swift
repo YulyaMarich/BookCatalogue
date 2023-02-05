@@ -35,20 +35,15 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     
     var viewModel: CategoryCollectionViewCellModelProtocol?
     
-    func setUpContentView() {
+    func configure() {
         contentView.backgroundColor = .white
         contentView.layer.cornerRadius = 4
         addSubviews()
         setUpConstraints()
+        setUpCategoryNameLabel()
         setUpCategoryInfoStack()
         makeShadow()
         divider.backgroundColor = UIColor(red: 0.353, green: 0.294, blue: 0.267, alpha: 1)
-        categoryNameLabel.text = viewModel?.listName
-        categoryNameLabel.font = UIFont.systemFont(ofSize: 27, weight: .heavy)
-        categoryNameLabel.lineBreakMode = .byWordWrapping
-        categoryNameLabel.numberOfLines = 0
-        updateFrequencyLabel.text = "Updated: weekly"
-        newestPublishedDate.text = "Last Published: 22.12.2022"
     }
     
     private func addSubviews() {
@@ -72,7 +67,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         divider.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 5).isActive = true
         divider.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -5).isActive = true
         divider.bottomAnchor.constraint(equalTo: categoryInfoStack.topAnchor, constant: -3).isActive = true
-        divider.heightAnchor.constraint(equalToConstant: 1.5).isActive = true
+        divider.heightAnchor.constraint(equalToConstant: 2).isActive = true
         
         categoryInfoStack.translatesAutoresizingMaskIntoConstraints = false
         categoryInfoStack.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 10).isActive = true
@@ -80,11 +75,33 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         categoryInfoStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10).isActive = true
     }
     
+    private func setUpCategoryNameLabel() {
+        categoryNameLabel.text = viewModel?.listName
+        categoryNameLabel.font = UIFont.systemFont(ofSize: 25, weight: .black)
+        categoryNameLabel.numberOfLines = 4
+        categoryNameLabel.adjustsFontSizeToFitWidth = true
+    }
+    
     private func setUpCategoryInfoStack() {
         categoryInfoStack.axis = .vertical
         categoryInfoStack.spacing = 5
-        updateFrequencyLabel.font = UIFont.systemFont(ofSize: UIScreen.main.bounds.height < 750 ? 10 : 10, weight: .medium)
-        newestPublishedDate.font = UIFont.systemFont(ofSize: UIScreen.main.bounds.height < 750 ? 10 : 10, weight: .medium)
+        
+        updateFrequencyLabel.attributedText = makeAttributedText(with: "Updated: ", and: viewModel?.updated.lowercased() ?? "No info")
+        newestPublishedDate.attributedText = makeAttributedText(with: "Last Published: ", and: viewModel?.newestPublishedDate.replacingOccurrences(of: "-", with: ".") ?? "No info")
+    }
+    
+    private func makeAttributedText(with parameter: String, and result: String) -> NSMutableAttributedString {
+        let parameterAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 10, weight: .medium)]
+        let resultAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 10, weight: .bold)]
+        
+        let resultAttributeString = NSAttributedString(string: result,
+                                              attributes: resultAttributes)
+        
+        let mutableAttributedString = NSMutableAttributedString(string: parameter,
+                                                                attributes: parameterAttributes)
+        mutableAttributedString.append(resultAttributeString)
+        
+        return mutableAttributedString
     }
     
     private func makeShadow() {

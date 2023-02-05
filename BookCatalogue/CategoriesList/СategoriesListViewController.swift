@@ -85,7 +85,7 @@ extension СategoriesListViewController: UICollectionViewDataSource, UICollectio
                                                       for: indexPath) as! CategoryCollectionViewCell
         let category = viewModel.data?[indexPath.item]
         cell.viewModel = CategoryCollectionViewCellModel(data: category)
-        cell.setUpContentView()
+        cell.configure()
         return cell
     }
     
