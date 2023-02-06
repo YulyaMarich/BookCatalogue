@@ -24,6 +24,7 @@ class CategoriesListViewModel: CategoriesListViewModelProtocol {
             switch result {
             case .success(let success):
                 self.data = success.results
+                self.data?.forEach { $0.store() }
                 completion()
             case .failure(let failure):
                 print(failure)
