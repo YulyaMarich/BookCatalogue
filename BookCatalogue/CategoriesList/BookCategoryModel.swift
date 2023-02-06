@@ -15,15 +15,6 @@ struct Category: Codable {
     let listName: String
     let updated: String
     let newestPublishedDate: String
-    
-    static let dataManager = CoreDataManager()
-    
-    func store() {
-        guard let category = Category.dataManager.add(type: CategoryEntity.self) else { return }
-        category.listName = listName
-        category.updateFrequency = updated
-        category.newestPublishedDate = newestPublishedDate
-        Category.dataManager.save()
-    }
+    let listNameEncoded: String
 }
 
