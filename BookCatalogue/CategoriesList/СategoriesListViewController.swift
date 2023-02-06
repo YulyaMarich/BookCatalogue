@@ -90,8 +90,10 @@ extension СategoriesListViewController: UICollectionViewDataSource, UICollectio
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let viewModel = BooksListViewModel()
-        let booksListVC = BooksListViewController(viewModel: viewModel)
+        guard let category = viewModel.data?[indexPath.item] else { return }
+        let viewModel1 = BooksListViewModel(listNameEncoded: category.listNameEncoded, listName: category.listName)
+        print(viewModel.data?[indexPath.item].listNameEncoded ?? "No info")
+        let booksListVC = BooksListViewController(viewModel: viewModel1)
         navigationController?.pushViewController(booksListVC, animated: true)
     }
 }

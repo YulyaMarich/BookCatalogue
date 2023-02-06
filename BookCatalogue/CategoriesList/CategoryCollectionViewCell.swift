@@ -8,27 +8,27 @@
 import UIKit
 
 class CategoryCollectionViewCell: UICollectionViewCell {
-    private var categoryNameLabel: UILabel = {
+    private lazy var categoryNameLabel: UILabel = {
         let categoryNameLabel = UILabel()
         return categoryNameLabel
     }()
     
-    private var categoryInfoStack: UIStackView = {
+    private lazy var categoryInfoStack: UIStackView = {
         let categoryInfoStack = UIStackView()
         return categoryInfoStack
     }()
     
-    private var updateFrequencyLabel: UILabel = {
+    private lazy var updateFrequencyLabel: UILabel = {
         let updateFrequencyLabel = UILabel()
         return updateFrequencyLabel
     }()
     
-    private var newestPublishedDate: UILabel = {
+    private lazy var newestPublishedDate: UILabel = {
         let newestPublishedDate = UILabel()
         return newestPublishedDate
     }()
     
-    private var divider: UIView = {
+    private lazy var divider: UIView = {
         let divider = UIView()
         return divider
     }()

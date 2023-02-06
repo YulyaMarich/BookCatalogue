@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import Combine
+import SafariServices
 
 class BooksListViewController: UIViewController {
     
@@ -19,10 +21,19 @@ class BooksListViewController: UIViewController {
         return collectionView
     }()
     
+   private var observers: [AnyCancellable] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.largeTitleDisplayMode = .never
-        setUpCollectionView()
+        navigationController?.navigationBar.tintColor = .black
+        navigationItem.title = viewModel.listName
+        UILabel.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).adjustsFontSizeToFitWidth = true
+    
+        viewModel.fetch { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.setUpCollectionView()
+        }
     }
     
     init(viewModel: BooksListViewModelProtocol) {
@@ -47,7 +58,7 @@ class BooksListViewController: UIViewController {
         collectionView.delegate = self
         
         collectionView.backgroundColor = UIColor(red: 0.973, green: 0.957, blue: 0.930, alpha: 1)
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "BookCell")
+        collectionView.register(BookCollectionViewCell.self, forCellWithReuseIdentifier: "BookCell")
         
         let sectionInserts = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
         let itemsAtRow: CGFloat = 1
@@ -60,7 +71,7 @@ class BooksListViewController: UIViewController {
         let layout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
         layout.minimumInteritemSpacing = minimumInteritemSpacing
         layout.minimumLineSpacing = 10
-        layout.itemSize = CGSize(width: itemWidth, height: itemWidth - 200)
+        layout.itemSize = CGSize(width: itemWidth, height: itemWidth - 100)
         layout.sectionInset = sectionInserts
     }
 }
@@ -68,12 +79,21 @@ class BooksListViewController: UIViewController {
 extension BooksListViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return viewModel.data?.count ?? 0
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "BookCell",
-                                                      for: indexPath)
+                                                      for: indexPath) as! BookCollectionViewCell
+        let book = viewModel.data?[indexPath.item]
+        cell.viewModel = BookCollectionViewCellModel(data: book, indexPath: indexPath)
+        
+        cell.pressBuyBookButton.sink { url in
+            let safariVC = SFSafariViewController(url: url)
+            self.present(safariVC, animated: true)
+        }.store(in: &observers)
+        
+        cell.configure()
         return cell
     }
 }

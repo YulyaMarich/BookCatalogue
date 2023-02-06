@@ -11,6 +11,7 @@
     </entity>
     <entity name="CategoryEntity" representedClassName=".CategoryEntity" syncable="YES">
         <attribute name="listName" optional="YES" attributeType="String"/>
+        <attribute name="listNameEncoded" optional="YES" attributeType="String"/>
         <attribute name="newestPublishedDate" optional="YES" attributeType="String"/>
         <attribute name="updateFrequency" optional="YES" attributeType="String"/>
     </entity>
