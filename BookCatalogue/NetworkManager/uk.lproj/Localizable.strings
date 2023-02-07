@@ -1,0 +1,12 @@
+/* 
+  Localizable.strings
+  BookCatalogue
+
+  Created by Julia on 07.02.2023.
+  
+*/
+"Updated: " = "Оновлюється: ";
+"Last Published: " = "Останнє оновлення: ";
+"BUY" = "КУПИТИ";
+"weekly" = "щотижнево";
+"monthly" = "щомісячно";

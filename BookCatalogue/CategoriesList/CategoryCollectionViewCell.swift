@@ -91,13 +91,13 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     }
     
     private func makeAttributedText(with parameter: String, and result: String) -> NSMutableAttributedString {
-        let parameterAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 10, weight: .medium)]
-        let resultAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 10, weight: .bold)]
+        let parameterAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: UIScreen.main.bounds.height < 750 ? 8 : 9, weight: .medium)]
+        let resultAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: UIScreen.main.bounds.height < 750 ? 9 : 9, weight: .bold)]
         
-        let resultAttributeString = NSAttributedString(string: result,
+        let resultAttributeString = NSAttributedString(string: result.localized(),
                                               attributes: resultAttributes)
         
-        let mutableAttributedString = NSMutableAttributedString(string: parameter,
+        let mutableAttributedString = NSMutableAttributedString(string: parameter.localized(),
                                                                 attributes: parameterAttributes)
         mutableAttributedString.append(resultAttributeString)
         

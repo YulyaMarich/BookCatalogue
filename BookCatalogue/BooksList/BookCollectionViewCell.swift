@@ -66,6 +66,11 @@ class BookCollectionViewCell: UICollectionViewCell {
         return divider
     }()
     
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView()
+        return activityIndicator
+    }()
+    
     let pressBuyBookButton = PassthroughSubject<URL, Never>()
     
     func configure() {
@@ -100,7 +105,7 @@ class BookCollectionViewCell: UICollectionViewCell {
     private func setUpBuyBookButton() {
         buyBookButton.backgroundColor = UIColor(red: 0.353, green: 0.294, blue: 0.267, alpha: 1)
         buyBookButton.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .black)
-        buyBookButton.setTitle("BUY ", for: .normal)
+        buyBookButton.setTitle("BUY".localized(), for: .normal)
         buyBookButton.layer.cornerRadius = 4
         buyBookButton.showsMenuAsPrimaryAction = true
         
@@ -144,6 +149,8 @@ class BookCollectionViewCell: UICollectionViewCell {
             if let image = viewModel?.cacheManager.getImageFromCache(for: imageURL) {
                 self.bookImageView.image = image
             } else {
+                bookImageView.isHidden = true
+                activityIndicator.startAnimating()
                 DispatchQueue.global().async {
                     guard let url = URL(string: imageURL) else { return }
                     guard let data = try? Data(contentsOf: url) else { return }
@@ -151,6 +158,8 @@ class BookCollectionViewCell: UICollectionViewCell {
                         if self.tag == self.viewModel?.indexPath.item {
                             self.viewModel?.cacheManager.saveDataToCache(data: data, for: imageURL)
                             self.bookImageView.image = UIImage(data: data)
+                            self.activityIndicator.stopAnimating()
+                            self.bookImageView.isHidden = false
                         }
                     }
                 }
@@ -165,6 +174,7 @@ class BookCollectionViewCell: UICollectionViewCell {
         viewBackground.addSubview(bookTitleLabel)
         viewBackground.addSubview(bookDescriptionLabel)
         viewBackground.addSubview(rankBackgroundView)
+        viewBackground.addSubview(activityIndicator)
         rankBackgroundView.addSubview(rankLabel)
         viewBackground.addSubview(authorAndPublisherStack)
         authorAndPublisherStack.addArrangedSubview(authorLabel)
@@ -191,6 +201,10 @@ class BookCollectionViewCell: UICollectionViewCell {
         bookImageView.leftAnchor.constraint(equalTo: viewBackground.leftAnchor).isActive = true
         bookImageView.widthAnchor.constraint(equalToConstant: contentView.frame.width / 2 - 45).isActive = true
         
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.centerXAnchor.constraint(equalTo: bookImageView.centerXAnchor).isActive = true
+        activityIndicator.centerYAnchor.constraint(equalTo: bookImageView.centerYAnchor).isActive = true
+
         buyBookButton.translatesAutoresizingMaskIntoConstraints = false
         buyBookButton.topAnchor.constraint(equalTo: bookImageView.bottomAnchor, constant: middleSpacing).isActive = true
         buyBookButton.leftAnchor.constraint(equalTo: bookImageView.leftAnchor).isActive = true
