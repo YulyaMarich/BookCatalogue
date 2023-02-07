@@ -99,16 +99,30 @@ class BookCollectionViewCell: UICollectionViewCell {
     
     private func setUpBuyBookButton() {
         buyBookButton.backgroundColor = UIColor(red: 0.353, green: 0.294, blue: 0.267, alpha: 1)
-        
         buyBookButton.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .black)
-        buyBookButton.setTitle("Buy", for: .normal)
+        buyBookButton.setTitle("BUY ", for: .normal)
         buyBookButton.layer.cornerRadius = 4
+        buyBookButton.showsMenuAsPrimaryAction = true
         
-        buyBookButton.addTarget(self, action: #selector(openAmazon), for: .touchUpInside)
+        buyBookButton.menu = UIMenu(children: createUIAtion())
     }
     
-    @objc func openAmazon() {
-        guard let stringURl = viewModel?.amazonProductUrl, let url = URL(string: stringURl) else { return }
+    private func createUIAtion() -> [UIAction] {
+        var actions: [UIAction] = []
+        
+        if let links = viewModel?.buyLinks {
+            for bookLink in links {
+                let action = UIAction(title: bookLink.name) { _ in
+                    self.openShop(on: bookLink.url)
+                }
+                actions.append(action)
+            }
+        }
+        return actions
+    }
+    
+    private func openShop(on link: String?) {
+        guard let stringURl = link, let url = URL(string: stringURl) else { return }
         pressBuyBookButton.send(url)
     }
     
