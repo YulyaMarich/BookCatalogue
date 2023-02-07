@@ -17,14 +17,24 @@ class NetworkManager {
     
     private let key = "GmLTWtiAwPIGXu0QdqSZGznq3TJR2Hy2"
     
-    func request<T: Codable>(type: RequestType, decodable: T.Type, completion:@escaping (_ result: Result<T, Error>) -> Void) {
+    private let cacheManager: CacheService
+    
+    init(cacheManager: CacheService = CacheManager()) {
+        self.cacheManager = cacheManager
+    }
+    
+    func request<T: Codable>(type: RequestType, decodable: T.Type, completion: @escaping (_ result: Result<T, Error>) -> Void) {
         let parameters = [NetworkConstants.apiKey: key]
         let url = NetworkConstants.url + type.apiPath
         
-        AF.request(url, method: .get, parameters: parameters, encoding: URLEncoding(destination: .queryString)).responseDecodable(of: decodable) { response in
+        cacheManager.getDataFromCache(for: url, decodable: decodable, completion: completion)
+        
+        AF.request(url, method: .get, parameters: parameters, encoding: URLEncoding(destination: .queryString)).responseDecodable(of: decodable) { [weak self] response in
             guard let data = response.data else { return }
             
             do {
+                self?.cacheManager.saveDataToCache(data: data, for: url)
+    
                 let decoder = JSONDecoder()
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
                 let data = try decoder.decode(decodable, from: data)
@@ -45,8 +55,8 @@ enum RequestType {
         switch self {
         case .categoriesList:
             return NetworkConstants.categoriesListApiPath
-        case .booksList(let string):
-            return string
+        case .booksList(let encodedListName):
+            return encodedListName
         }
     }
 }

@@ -67,7 +67,7 @@ class BookCollectionViewCell: UICollectionViewCell {
     }()
     
     let pressBuyBookButton = PassthroughSubject<URL, Never>()
-
+    
     func configure() {
         setUpImageView()
         addSubviews()
@@ -84,7 +84,7 @@ class BookCollectionViewCell: UICollectionViewCell {
     private func setUpContentView() {
         contentView.backgroundColor = .white
         contentView.layer.cornerRadius = 4
-     
+        
         divider.backgroundColor = UIColor(red: 0.353, green: 0.294, blue: 0.267, alpha: 1)
     }
     
@@ -94,12 +94,12 @@ class BookCollectionViewCell: UICollectionViewCell {
         rankLabel.adjustsFontSizeToFitWidth = true
         rankLabel.textAlignment = .center
         rankBackgroundView.backgroundColor = .white
-makeShadow(to: rankBackgroundView)
+        makeShadow(to: rankBackgroundView)
     }
     
     private func setUpBuyBookButton() {
         buyBookButton.backgroundColor = UIColor(red: 0.353, green: 0.294, blue: 0.267, alpha: 1)
-     
+        
         buyBookButton.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .black)
         buyBookButton.setTitle("Buy", for: .normal)
         buyBookButton.layer.cornerRadius = 4
@@ -126,11 +126,20 @@ makeShadow(to: rankBackgroundView)
     
     private func setUpImageView() {
         self.tag = viewModel?.indexPath.item ?? 0
-        DispatchQueue.global().async {
-            guard let url = URL(string: self.viewModel?.bookImage ?? "") else { return }
-            guard let data = try? Data(contentsOf: url) else { return }
-            DispatchQueue.main.async {
-                    self.bookImageView.image = UIImage(data: data)
+        if let imageURL = viewModel?.bookImage {
+            if let image = viewModel?.cacheManager.getImageFromCache(for: imageURL) {
+                self.bookImageView.image = image
+            } else {
+                DispatchQueue.global().async {
+                    guard let url = URL(string: imageURL) else { return }
+                    guard let data = try? Data(contentsOf: url) else { return }
+                    DispatchQueue.main.async {
+                        if self.tag == self.viewModel?.indexPath.item {
+                            self.viewModel?.cacheManager.saveDataToCache(data: data, for: imageURL)
+                            self.bookImageView.image = UIImage(data: data)
+                        }
+                    }
+                }
             }
         }
     }
@@ -221,7 +230,7 @@ makeShadow(to: rankBackgroundView)
         
         authorLabel.textColor = .darkGray
         publisherLabel.textColor = .darkGray
-
+        
         authorLabel.numberOfLines = 0
         publisherLabel.numberOfLines = 0
     }

@@ -22,9 +22,10 @@ class СategoriesListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNavigationController()
+        setUpCollectionView()
         viewModel.fetch { [weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.setUpCollectionView()
+            strongSelf.collectionView.reloadData()
         }
     }
     
@@ -92,7 +93,6 @@ extension СategoriesListViewController: UICollectionViewDataSource, UICollectio
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let category = viewModel.data?[indexPath.item] else { return }
         let viewModel1 = BooksListViewModel(listNameEncoded: category.listNameEncoded, listName: category.listName)
-        print(viewModel.data?[indexPath.item].listNameEncoded ?? "No info")
         let booksListVC = BooksListViewController(viewModel: viewModel1)
         navigationController?.pushViewController(booksListVC, animated: true)
     }

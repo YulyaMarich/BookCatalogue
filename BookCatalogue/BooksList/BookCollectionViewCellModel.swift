@@ -6,10 +6,10 @@
 //
 
 import Foundation
-import SafariServices
 
 protocol BookCollectionViewCellModelProtocol {
     var data: Book? { get }
+    var cacheManager: CacheService { get }
     var title: String { get }
     var description: String { get }
     var author: String { get }
@@ -21,7 +21,9 @@ protocol BookCollectionViewCellModelProtocol {
 }
 
 class BookCollectionViewCellModel: BookCollectionViewCellModelProtocol {
-    var indexPath: IndexPath
+    let indexPath: IndexPath
+    
+    let cacheManager: CacheService
     
     var title: String {
         data?.title ?? "Mo info"
@@ -51,10 +53,11 @@ class BookCollectionViewCellModel: BookCollectionViewCellModelProtocol {
         data?.amazonProductUrl ?? "Mo info"
     }
     
-    var data: Book?
+    let data: Book?
     
-    init(data: Book?, indexPath: IndexPath) {
+    init(data: Book?, indexPath: IndexPath, cacheManager: CacheService = CacheManager()) {
         self.data = data
         self.indexPath = indexPath
+        self.cacheManager = cacheManager
     }
 }

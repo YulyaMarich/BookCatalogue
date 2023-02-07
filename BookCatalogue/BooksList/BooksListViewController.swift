@@ -21,7 +21,7 @@ class BooksListViewController: UIViewController {
         return collectionView
     }()
     
-   private var observers: [AnyCancellable] = []
+    private var observers: [AnyCancellable] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,10 +29,11 @@ class BooksListViewController: UIViewController {
         navigationController?.navigationBar.tintColor = .black
         navigationItem.title = viewModel.listName
         UILabel.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).adjustsFontSizeToFitWidth = true
-    
+        
+        setUpCollectionView()
         viewModel.fetch { [weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.setUpCollectionView()
+            strongSelf.collectionView.reloadData()
         }
     }
     
@@ -67,7 +68,7 @@ class BooksListViewController: UIViewController {
         let spacing = minimumInteritemSpacing * (itemsAtRow - 1)
         let availableWidth = screenWidth - sectionInserts.left - sectionInserts.right - spacing
         let itemWidth = availableWidth / itemsAtRow
-    
+        
         let layout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
         layout.minimumInteritemSpacing = minimumInteritemSpacing
         layout.minimumLineSpacing = 10
@@ -77,11 +78,11 @@ class BooksListViewController: UIViewController {
 }
 
 extension BooksListViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
-
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.data?.count ?? 0
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "BookCell",
                                                       for: indexPath) as! BookCollectionViewCell
@@ -94,6 +95,7 @@ extension BooksListViewController: UICollectionViewDataSource, UICollectionViewD
         }.store(in: &observers)
         
         cell.configure()
+
         return cell
     }
 }
