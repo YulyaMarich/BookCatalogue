@@ -18,9 +18,15 @@ protocol BookCollectionViewCellModelProtocol {
     var rank: Int { get }
     var amazonProductUrl: String { get }
     var indexPath: IndexPath{ get }
+    var buyLinks: [Link] { get }
 }
 
 class BookCollectionViewCellModel: BookCollectionViewCellModelProtocol {
+
+    var buyLinks: [Link] {
+        data?.buyLinks ?? []
+    }
+    
     let indexPath: IndexPath
     
     let cacheManager: CacheService
