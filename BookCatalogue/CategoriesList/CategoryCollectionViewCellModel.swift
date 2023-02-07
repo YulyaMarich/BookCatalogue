@@ -20,7 +20,7 @@ class CategoryCollectionViewCellModel: CategoryCollectionViewCellModelProtocol {
     }
     
     var updated: String {
-        data?.updated ?? "Mo info"
+        data?.updated.localized() ?? "Mo info"
     }
     
     var newestPublishedDate: String {

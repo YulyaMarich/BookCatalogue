@@ -56,6 +56,7 @@ class СategoriesListViewController: UIViewController {
     
     private func setUpNavigationController() {
         navigationItem.title = "The New York Times"
+        navigationController?.navigationBar.largeTitleTextAttributes = [.font: UIFont.systemFont(ofSize: UIScreen.main.bounds.height < 750 ? 33 : 36, weight: .black)]
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
     }
