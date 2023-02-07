@@ -17,12 +17,18 @@ class СategoriesListViewController: UIViewController {
         return collectionView
     }()
     
+    private lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        return refreshControl
+    }()
+    
     private var viewModel: CategoriesListViewModelProtocol
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNavigationController()
         setUpCollectionView()
+        setUpRefreshControl()
         viewModel.fetch { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.collectionView.reloadData()
@@ -36,6 +42,16 @@ class СategoriesListViewController: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setUpRefreshControl() {
+        refreshControl.addTarget(self, action: #selector(refreshCollectionView), for: .valueChanged)
+        collectionView.refreshControl = refreshControl
+    }
+    
+    @objc func refreshCollectionView() {
+        collectionView.reloadData()
+        refreshControl.endRefreshing()
     }
     
     private func setUpNavigationController() {

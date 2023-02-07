@@ -21,6 +21,11 @@ class BooksListViewController: UIViewController {
         return collectionView
     }()
     
+    private lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        return refreshControl
+    }()
+    
     private var observers: [AnyCancellable] = []
     
     override func viewDidLoad() {
@@ -29,8 +34,8 @@ class BooksListViewController: UIViewController {
         navigationController?.navigationBar.tintColor = .black
         navigationItem.title = viewModel.listName
         UILabel.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).adjustsFontSizeToFitWidth = true
-        
         setUpCollectionView()
+        setUpRefreshControl()
         viewModel.fetch { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.collectionView.reloadData()
@@ -44,6 +49,16 @@ class BooksListViewController: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setUpRefreshControl() {
+        refreshControl.addTarget(self, action: #selector(refreshCollectionView), for: .valueChanged)
+        collectionView.refreshControl = refreshControl
+    }
+    
+    @objc func refreshCollectionView() {
+        collectionView.reloadData()
+        refreshControl.endRefreshing()
     }
     
     private func setUpCollectionView() {
