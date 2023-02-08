@@ -16,7 +16,6 @@ protocol BookCollectionViewCellModelProtocol {
     var publisher: String { get }
     var bookImage: String { get }
     var rank: Int { get }
-    var amazonProductUrl: String { get }
     var indexPath: IndexPath{ get }
     var buyLinks: [Link] { get }
 }
@@ -53,10 +52,6 @@ class BookCollectionViewCellModel: BookCollectionViewCellModelProtocol {
     
     var rank: Int {
         data?.rank ?? 0
-    }
-    
-    var amazonProductUrl: String {
-        data?.amazonProductUrl ?? "Mo info"
     }
     
     let data: Book?

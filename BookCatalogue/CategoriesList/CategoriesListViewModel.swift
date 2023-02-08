@@ -6,15 +6,19 @@
 //
 
 import Foundation
+import Combine
 
 protocol CategoriesListViewModelProtocol {
     var networkManager: NetworkManager { get }
     var data: [Category]? { get set }
-    
+    var errorPublisher: CurrentValueSubject<String?, Never> { get }
+
     func fetch(completion: @escaping() -> Void)
 }
 
 class CategoriesListViewModel: CategoriesListViewModelProtocol {
+    var errorPublisher = CurrentValueSubject<String?, Never> (nil)
+
     var data: [Category]?
     
     var networkManager = NetworkManager()
@@ -26,7 +30,8 @@ class CategoriesListViewModel: CategoriesListViewModelProtocol {
                 self.data = success.results
                 completion()
             case .failure(let failure):
-                print(failure)
+                self.errorPublisher.value = failure.asAFError?.underlyingError?.localizedDescription
+                print(failure.localizedDescription)
             }
         }
     }

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 import Alamofire
 
 class СategoriesListViewController: UIViewController {
@@ -17,22 +18,37 @@ class СategoriesListViewController: UIViewController {
         return collectionView
     }()
     
-    private lazy var refreshControl: UIRefreshControl = {
+    private lazy var imageRefreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         return refreshControl
     }()
     
+    private lazy var loadingInducator: UIActivityIndicatorView = {
+        let loadingInducator = UIActivityIndicatorView()
+        return loadingInducator
+    }()
+    
     private var viewModel: CategoriesListViewModelProtocol
+    private var observers: [AnyCancellable] = []
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = UIColor(red: 0.973, green: 0.957, blue: 0.930, alpha: 1)
+        
         setUpNavigationController()
-        setUpCollectionView()
+        setUpActivityIndicator()
+        loadingInducator.startAnimating()
         setUpRefreshControl()
         viewModel.fetch { [weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.collectionView.reloadData()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                strongSelf.loadingInducator.stopAnimating()
+                strongSelf.setUpCollectionView()
+                strongSelf.collectionView.reloadData()
+            }
         }
+        showErrorToast()
     }
     
     init(viewModel: CategoriesListViewModelProtocol = CategoriesListViewModel()) {
@@ -44,14 +60,21 @@ class СategoriesListViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func showErrorToast() {
+        viewModel.errorPublisher.sink { error in
+            guard let error = error else { return }
+            self.showToast(with: error)
+        }.store(in: &self.observers)
+    }
+    
     private func setUpRefreshControl() {
-        refreshControl.addTarget(self, action: #selector(refreshCollectionView), for: .valueChanged)
-        collectionView.refreshControl = refreshControl
+        imageRefreshControl.addTarget(self, action: #selector(refreshCollectionView), for: .valueChanged)
+        collectionView.refreshControl = imageRefreshControl
     }
     
     @objc func refreshCollectionView() {
         collectionView.reloadData()
-        refreshControl.endRefreshing()
+        imageRefreshControl.endRefreshing()
     }
     
     private func setUpNavigationController() {
@@ -61,8 +84,19 @@ class СategoriesListViewController: UIViewController {
         navigationItem.largeTitleDisplayMode = .always
     }
     
-    private func setUpCollectionView() {
+    private func setUpActivityIndicator() {
         view.addSubview(collectionView)
+        
+        view.addSubview(loadingInducator)
+        
+        loadingInducator.translatesAutoresizingMaskIntoConstraints = false
+        loadingInducator.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
+        loadingInducator.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor).isActive = true
+        
+        loadingInducator.hidesWhenStopped = true
+    }
+    
+    private func setUpCollectionView() {
         
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
@@ -106,7 +140,6 @@ extension СategoriesListViewController: UICollectionViewDataSource, UICollectio
         cell.configure()
         return cell
     }
-    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let category = viewModel.data?[indexPath.item] else { return }
         let viewModel1 = BooksListViewModel(listNameEncoded: category.listNameEncoded, listName: category.listName)

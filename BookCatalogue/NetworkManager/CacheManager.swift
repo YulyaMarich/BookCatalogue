@@ -26,7 +26,6 @@ class CacheManager: CacheService {
         if let data = realm.cacheData(forURLString: url) {
             do {
                 let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
                 
                 let data = try decoder.decode(decodable, from: data)
                 

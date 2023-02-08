@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		A311C63129928E82001DC262 /* Extension + String.swift in Sources */ = {isa = PBXBuildFile; fileRef = A311C63029928E82001DC262 /* Extension + String.swift */; };
 		A311C63429929210001DC262 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A311C63629929210001DC262 /* Localizable.strings */; };
+		A311C63D2992AA2F001DC262 /* Extension + UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A311C63C2992AA2F001DC262 /* Extension + UIViewController.swift */; };
 		A36F299D298EBCCC001F42CD /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = A36F299C298EBCCC001F42CD /* Alamofire */; };
 		A36F299F298EBCED001F42CD /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36F299E298EBCED001F42CD /* NetworkManager.swift */; };
 		A3A23874298FEE1800FEFFB5 /* BookCategoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3A23873298FEE1800FEFFB5 /* BookCategoryModel.swift */; };
@@ -35,6 +36,7 @@
 		A311C63029928E82001DC262 /* Extension + String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension + String.swift"; sourceTree = "<group>"; };
 		A311C63529929210001DC262 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A311C63729929243001DC262 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A311C63C2992AA2F001DC262 /* Extension + UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension + UIViewController.swift"; sourceTree = "<group>"; };
 		A36F299E298EBCED001F42CD /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		A3A23873298FEE1800FEFFB5 /* BookCategoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookCategoryModel.swift; sourceTree = "<group>"; };
 		A3A23875298FEE2D00FEFFB5 /* BooksListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooksListModel.swift; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 				A3A238E129918DF400FEFFB5 /* RealmCache.swift */,
 				A3A238E829918ED200FEFFB5 /* CacheManager.swift */,
 				A311C63029928E82001DC262 /* Extension + String.swift */,
+				A311C63C2992AA2F001DC262 /* Extension + UIViewController.swift */,
 				A311C63629929210001DC262 /* Localizable.strings */,
 			);
 			path = NetworkManager;
@@ -240,6 +243,7 @@
 				A36F299F298EBCED001F42CD /* NetworkManager.swift in Sources */,
 				A3A238BB29911AC300FEFFB5 /* BookCollectionViewCell.swift in Sources */,
 				A3A4FD09298D346C00FFF6A6 /* CategoryCollectionViewCell.swift in Sources */,
+				A311C63D2992AA2F001DC262 /* Extension + UIViewController.swift in Sources */,
 				A3A4FCFF298C41E200FFF6A6 /* BooksListViewController.swift in Sources */,
 				A3A4FD01298C41EC00FFF6A6 /* BooksListViewModel.swift in Sources */,
 				A3A23876298FEE2D00FEFFB5 /* BooksListModel.swift in Sources */,
