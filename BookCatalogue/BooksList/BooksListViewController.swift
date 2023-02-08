@@ -26,16 +26,25 @@ class BooksListViewController: UIViewController {
         return refreshControl
     }()
     
+    private lazy var loadingInducator: UIActivityIndicatorView = {
+        let loadingInducator = UIActivityIndicatorView()
+        return loadingInducator
+    }()
+    
     private var observers: [AnyCancellable] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = UIColor(red: 0.973, green: 0.957, blue: 0.930, alpha: 1)
+addSubviews()
+        setUpActivityIndicator()
         setUpNavigationController()
         setUpRefreshControl()
         viewModel.fetch { [weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.collectionView.reloadData()
+            strongSelf.loadingInducator.stopAnimating()
             strongSelf.setUpCollectionView()
+            strongSelf.collectionView.reloadData()
         }
         showErrorToast()
     }
@@ -76,13 +85,25 @@ class BooksListViewController: UIViewController {
         }
     }
     
-    private func setUpCollectionView() {
-        view.addSubview(collectionView)
+    private func setUpActivityIndicator() {
+        loadingInducator.translatesAutoresizingMaskIntoConstraints = false
+        loadingInducator.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
+        loadingInducator.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor).isActive = true
         
+        loadingInducator.startAnimating()
+        loadingInducator.hidesWhenStopped = true
+    }
+    
+    private func addSubviews() {
+        view.addSubview(collectionView)
+        view.addSubview(loadingInducator)
+    }
+    
+    private func setUpCollectionView() {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
         collectionView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
-        collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10).isActive = true
         collectionView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         
         collectionView.dataSource = self
