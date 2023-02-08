@@ -16,7 +16,7 @@ extension UIViewController {
                                   y: view.frame.size.height,
                                   width: width,
                                   height: 60)
-        toastLabel.backgroundColor = .gray
+        toastLabel.backgroundColor = .black
         toastLabel.textColor = .white
         toastLabel.text = message
         toastLabel.numberOfLines = 0

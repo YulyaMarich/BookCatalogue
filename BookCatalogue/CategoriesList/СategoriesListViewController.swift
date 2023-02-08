@@ -31,15 +31,14 @@ class СategoriesListViewController: UIViewController {
     private var viewModel: CategoriesListViewModelProtocol
     private var observers: [AnyCancellable] = []
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(red: 0.973, green: 0.957, blue: 0.930, alpha: 1)
-        
+        addSubviews()
         setUpNavigationController()
         setUpActivityIndicator()
-        loadingInducator.startAnimating()
         setUpRefreshControl()
+        
         viewModel.fetch { [weak self] in
             guard let strongSelf = self else { return }
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -48,6 +47,7 @@ class СategoriesListViewController: UIViewController {
                 strongSelf.collectionView.reloadData()
             }
         }
+        
         showErrorToast()
     }
     
@@ -58,6 +58,11 @@ class СategoriesListViewController: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func addSubviews() {
+        view.addSubview(collectionView)
+        view.addSubview(loadingInducator)
     }
     
     private func showErrorToast() {
@@ -73,8 +78,11 @@ class СategoriesListViewController: UIViewController {
     }
     
     @objc func refreshCollectionView() {
-        collectionView.reloadData()
-        imageRefreshControl.endRefreshing()
+        viewModel.fetch { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.collectionView.reloadData()
+            strongSelf.imageRefreshControl.endRefreshing()
+        }
     }
     
     private func setUpNavigationController() {
@@ -85,14 +93,11 @@ class СategoriesListViewController: UIViewController {
     }
     
     private func setUpActivityIndicator() {
-        view.addSubview(collectionView)
-        
-        view.addSubview(loadingInducator)
-        
         loadingInducator.translatesAutoresizingMaskIntoConstraints = false
         loadingInducator.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
         loadingInducator.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor).isActive = true
         
+        loadingInducator.startAnimating()
         loadingInducator.hidesWhenStopped = true
     }
     
