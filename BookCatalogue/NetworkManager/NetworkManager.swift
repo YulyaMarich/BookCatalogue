@@ -17,7 +17,7 @@ class NetworkManager: NetworkService {
     
     private let key = "GmLTWtiAwPIGXu0QdqSZGznq3TJR2Hy2"
     
-    let cacheManager: CacheService
+    private let cacheManager: CacheService
     
     init(cacheManager: CacheService = CacheManager()) {
         self.cacheManager = cacheManager
@@ -38,6 +38,7 @@ class NetworkManager: NetworkService {
             case .success(let data):
                 guard let responseData = response.data else { return }
                 self?.cacheManager.saveDataToCache(data: responseData, for: url)
+                
                 completion(.success(data))
             }
         }

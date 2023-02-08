@@ -11,7 +11,12 @@ import SafariServices
 
 class BooksListViewController: UIViewController {
     
-    let viewModel: BooksListViewModelProtocol
+    private struct Constants {
+        static let cellIdentifier = "BookCell"
+        static let horizontalInsets: CGFloat = 15
+        static let itemsAtRow: CGFloat = 1
+        static let minimumInteritemSpacing: CGFloat = 10
+    }
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -32,6 +37,16 @@ class BooksListViewController: UIViewController {
     }()
     
     private var observers: [AnyCancellable] = []
+    private let viewModel: BooksListViewModelProtocol
+    
+    init(viewModel: BooksListViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,16 +60,8 @@ class BooksListViewController: UIViewController {
             strongSelf.setUpCollectionView()
             strongSelf.collectionView.reloadData()
         }
-        showErrorToast()
-    }
-    
-    init(viewModel: BooksListViewModelProtocol) {
-        self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        
+        observeErrorToast()
     }
     
     private func addSubviews() {
@@ -68,10 +75,10 @@ class BooksListViewController: UIViewController {
         navigationItem.title = viewModel.listName
         UILabel.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).adjustsFontSizeToFitWidth = true
         
-        view.backgroundColor = UIColor(red: 0.973, green: 0.957, blue: 0.930, alpha: 1)
+        view.backgroundColor = .backgroundColor
     }
     
-    private func showErrorToast() {
+    private func observeErrorToast() {
         viewModel.errorPublisher.sink { error in
             guard let error = error else { return }
             self.showToast(with: error)
@@ -102,19 +109,17 @@ class BooksListViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.delegate = self
         
-        collectionView.backgroundColor = UIColor(red: 0.973, green: 0.957, blue: 0.930, alpha: 1)
-        collectionView.register(BookCollectionViewCell.self, forCellWithReuseIdentifier: "BookCell")
+        collectionView.backgroundColor = .clear
+        collectionView.register(BookCollectionViewCell.self, forCellWithReuseIdentifier: Constants.cellIdentifier)
         
-        let sectionInserts = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
-        let itemsAtRow: CGFloat = 1
-        let minimumInteritemSpacing: CGFloat = 10
+        let sectionInserts = UIEdgeInsets(top: 0, left: Constants.horizontalInsets, bottom: 0, right: Constants.horizontalInsets)
         let screenWidth = view.frame.width
-        let spacing = minimumInteritemSpacing * (itemsAtRow - 1)
+        let spacing = Constants.minimumInteritemSpacing * (Constants.itemsAtRow - 1)
         let availableWidth = screenWidth - sectionInserts.left - sectionInserts.right - spacing
-        let itemWidth = availableWidth / itemsAtRow
+        let itemWidth = availableWidth / Constants.itemsAtRow
         
         let layout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
-        layout.minimumInteritemSpacing = minimumInteritemSpacing
+        layout.minimumInteritemSpacing = Constants.minimumInteritemSpacing
         layout.minimumLineSpacing = 10
         layout.itemSize = CGSize(width: itemWidth, height: itemWidth - 100)
         layout.sectionInset = sectionInserts
@@ -136,7 +141,7 @@ extension BooksListViewController: UICollectionViewDataSource, UICollectionViewD
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "BookCell",
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellIdentifier,
                                                       for: indexPath) as! BookCollectionViewCell
         let book = viewModel.data?[indexPath.item]
         cell.viewModel = BookCollectionViewCellModel(data: book, indexPath: indexPath)

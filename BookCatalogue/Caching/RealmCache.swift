@@ -17,6 +17,7 @@ class RealmCacheItem: Object {
 }
 
 protocol Cacheble {
+    
     func cacheData(forURLString url: String) -> Data?
     func saveCache(data: Data, forURLString url: String)
 }

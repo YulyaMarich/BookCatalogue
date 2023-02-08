@@ -10,7 +10,13 @@ import Combine
 
 class BookCollectionViewCell: UICollectionViewCell {
     
-    var viewModel: BookCollectionViewCellModelProtocol?
+    private struct Constants {
+        static let rankLabelSize: CGFloat = 35
+        static let stackTextFont: CGFloat = 10
+        static let topPadding: CGFloat = 10
+        static let bottomPadding: CGFloat = -10
+        static let middleSpacing: CGFloat = 10
+    }
     
     private lazy var viewBackground: UIView = {
         let viewBackground = UIView()
@@ -73,6 +79,7 @@ class BookCollectionViewCell: UICollectionViewCell {
     }()
     
     let pressBuyBookButton = PassthroughSubject<URL, Never>()
+    var viewModel: BookCollectionViewCellModelProtocol?
     
     func configure() {
         contentView.makeShadowWith()
@@ -106,21 +113,18 @@ class BookCollectionViewCell: UICollectionViewCell {
         contentView.backgroundColor = .white
         contentView.layer.cornerRadius = 4
         
-        divider.backgroundColor = UIColor(red: 0.353, green: 0.294, blue: 0.267, alpha: 1)
+        divider.backgroundColor = .lightBrownColor
     }
     
     private func setUpConstraints() {
         let cellHeight = contentView.frame.height
-        let topPadding: CGFloat = 10
-        let bottomPadding: CGFloat = -10
-        let middleSpacing: CGFloat = 10
-        let availableHeight = cellHeight - topPadding - bottomPadding - middleSpacing
+        let availableHeight = cellHeight - Constants.topPadding - Constants.bottomPadding - Constants.middleSpacing
         let buyBookButtomHeight = availableHeight * 0.14
         
         viewBackground.translatesAutoresizingMaskIntoConstraints = false
-        viewBackground.topAnchor.constraint(equalTo: contentView.topAnchor, constant: topPadding).isActive = true
+        viewBackground.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Constants.topPadding).isActive = true
         viewBackground.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 10).isActive = true
-        viewBackground.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: bottomPadding).isActive = true
+        viewBackground.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: Constants.bottomPadding).isActive = true
         viewBackground.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -10).isActive = true
         
         bookImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -133,7 +137,7 @@ class BookCollectionViewCell: UICollectionViewCell {
         activityIndicator.centerYAnchor.constraint(equalTo: bookImageView.centerYAnchor).isActive = true
 
         buyBookButton.translatesAutoresizingMaskIntoConstraints = false
-        buyBookButton.topAnchor.constraint(equalTo: bookImageView.bottomAnchor, constant: middleSpacing).isActive = true
+        buyBookButton.topAnchor.constraint(equalTo: bookImageView.bottomAnchor, constant: Constants.middleSpacing).isActive = true
         buyBookButton.leftAnchor.constraint(equalTo: bookImageView.leftAnchor).isActive = true
         buyBookButton.heightAnchor.constraint(equalToConstant: buyBookButtomHeight).isActive = true
         buyBookButton.widthAnchor.constraint(equalToConstant: contentView.frame.width / 2 - 45).isActive = true
@@ -142,14 +146,14 @@ class BookCollectionViewCell: UICollectionViewCell {
         rankBackgroundView.translatesAutoresizingMaskIntoConstraints = false
         rankBackgroundView.topAnchor.constraint(equalTo: bookImageView.topAnchor, constant: -15).isActive = true
         rankBackgroundView.leftAnchor.constraint(equalTo: bookImageView.leftAnchor, constant: -15).isActive = true
-        rankBackgroundView.widthAnchor.constraint(equalToConstant: 35).isActive = true
-        rankBackgroundView.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        rankBackgroundView.widthAnchor.constraint(equalToConstant: Constants.rankLabelSize).isActive = true
+        rankBackgroundView.heightAnchor.constraint(equalToConstant: Constants.rankLabelSize).isActive = true
         
         rankLabel.translatesAutoresizingMaskIntoConstraints = false
         rankLabel.centerXAnchor.constraint(equalTo: rankBackgroundView.centerXAnchor).isActive = true
         rankLabel.centerYAnchor.constraint(equalTo: rankBackgroundView.centerYAnchor).isActive = true
-        rankLabel.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        rankLabel.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        rankLabel.widthAnchor.constraint(equalToConstant: Constants.rankLabelSize).isActive = true
+        rankLabel.heightAnchor.constraint(equalToConstant: Constants.rankLabelSize).isActive = true
         
         bookTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         bookTitleLabel.topAnchor.constraint(equalTo: viewBackground.topAnchor).isActive = true
@@ -208,8 +212,8 @@ class BookCollectionViewCell: UICollectionViewCell {
         authorLabel.text = viewModel?.author
         publisherLabel.text = viewModel?.publisher
         
-        authorLabel.font = UIFont.systemFont(ofSize: 10, weight: .bold)
-        publisherLabel.font = UIFont.systemFont(ofSize: 10, weight: .bold)
+        authorLabel.font = UIFont.systemFont(ofSize: Constants.stackTextFont, weight: .bold)
+        publisherLabel.font = UIFont.systemFont(ofSize: Constants.stackTextFont, weight: .bold)
         
         authorLabel.textColor = .darkGray
         publisherLabel.textColor = .darkGray
@@ -231,7 +235,7 @@ class BookCollectionViewCell: UICollectionViewCell {
     }
     
     private func setUpBuyBookButton() {
-        buyBookButton.backgroundColor = UIColor(red: 0.353, green: 0.294, blue: 0.267, alpha: 1)
+        buyBookButton.backgroundColor = .lightBrownColor
         buyBookButton.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .black)
         buyBookButton.setTitle("BUY".localized(), for: .normal)
         buyBookButton.layer.cornerRadius = 4

@@ -22,39 +22,29 @@ protocol BookCollectionViewCellModelProtocol {
 }
 
 class BookCollectionViewCellModel: BookCollectionViewCellModelProtocol {
-
-    init(data: Book?, indexPath: IndexPath, cacheManager: CacheService = CacheManager()) {
-        self.data = data
-        self.indexPath = indexPath
-        self.cacheManager = cacheManager
-    }
     
     var buyLinks: [Link] {
         data?.buyLinks ?? []
     }
     
-    let indexPath: IndexPath
-    
-    let cacheManager: CacheService
-    
     var title: String {
-        data?.title ?? "Mo info"
+        data?.title ?? "No info".localized()
     }
     
     var description: String {
-        data?.description ?? "Mo info"
+        data?.description ?? "No info".localized()
     }
     
     var author: String {
-        data?.author ?? "Mo info"
+        data?.author ?? "No info".localized()
     }
     
     var publisher: String {
-        data?.publisher ?? "Mo info"
+        data?.publisher ?? "No info".localized()
     }
     
     var bookImage: String {
-        data?.bookImage ?? "Mo info"
+        data?.bookImage ?? "No info".localized()
     }
     
     var rank: Int {
@@ -62,4 +52,14 @@ class BookCollectionViewCellModel: BookCollectionViewCellModelProtocol {
     }
     
     let data: Book?
+    
+    let indexPath: IndexPath
+    
+    let cacheManager: CacheService
+    
+    init(data: Book?, indexPath: IndexPath, cacheManager: CacheService = CacheManager()) {
+        self.data = data
+        self.indexPath = indexPath
+        self.cacheManager = cacheManager
+    }
 }

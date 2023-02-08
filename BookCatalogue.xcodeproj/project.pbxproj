@@ -11,6 +11,7 @@
 		A311C63429929210001DC262 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A311C63629929210001DC262 /* Localizable.strings */; };
 		A311C63D2992AA2F001DC262 /* Extension + UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A311C63C2992AA2F001DC262 /* Extension + UIViewController.swift */; };
 		A36ED5FE2993E382004B25F4 /* CacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36ED5FD2993E382004B25F4 /* CacheService.swift */; };
+		A36ED6002993FE3C004B25F4 /* Extension + UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36ED5FF2993FE3C004B25F4 /* Extension + UIColor.swift */; };
 		A36F299D298EBCCC001F42CD /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = A36F299C298EBCCC001F42CD /* Alamofire */; };
 		A36F299F298EBCED001F42CD /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36F299E298EBCED001F42CD /* NetworkManager.swift */; };
 		A3A23874298FEE1800FEFFB5 /* BookCategoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3A23873298FEE1800FEFFB5 /* BookCategoryModel.swift */; };
@@ -40,6 +41,7 @@
 		A311C63729929243001DC262 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A311C63C2992AA2F001DC262 /* Extension + UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension + UIViewController.swift"; sourceTree = "<group>"; };
 		A36ED5FD2993E382004B25F4 /* CacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheService.swift; sourceTree = "<group>"; };
+		A36ED5FF2993FE3C004B25F4 /* Extension + UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension + UIColor.swift"; sourceTree = "<group>"; };
 		A36F299E298EBCED001F42CD /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		A3A23873298FEE1800FEFFB5 /* BookCategoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookCategoryModel.swift; sourceTree = "<group>"; };
 		A3A23875298FEE2D00FEFFB5 /* BooksListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooksListModel.swift; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 				A311C63029928E82001DC262 /* Extension + String.swift */,
 				A311C63C2992AA2F001DC262 /* Extension + UIViewController.swift */,
 				A3D3F1C32993E0C0009F2091 /* Extension + UIView.swift */,
+				A36ED5FF2993FE3C004B25F4 /* Extension + UIColor.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -310,6 +313,7 @@
 				A36ED5FE2993E382004B25F4 /* CacheService.swift in Sources */,
 				A3A4FCFD298C41B900FFF6A6 /* CategoriesListViewModel.swift in Sources */,
 				A3A4FCFA298C418A00FFF6A6 /* СategoriesListViewController.swift in Sources */,
+				A36ED6002993FE3C004B25F4 /* Extension + UIColor.swift in Sources */,
 				A3A23874298FEE1800FEFFB5 /* BookCategoryModel.swift in Sources */,
 				A3A4FCE5298C27D800FFF6A6 /* SceneDelegate.swift in Sources */,
 				A3A238BD29911AC700FEFFB5 /* BookCollectionViewCellModel.swift in Sources */,
