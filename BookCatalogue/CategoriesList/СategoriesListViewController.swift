@@ -10,6 +10,7 @@ import Combine
 import Alamofire
 
 class СategoriesListViewController: UIViewController {
+    
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -18,7 +19,7 @@ class СategoriesListViewController: UIViewController {
         return collectionView
     }()
     
-    private lazy var imageRefreshControl: UIRefreshControl = {
+    private lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         return refreshControl
     }()
@@ -41,11 +42,9 @@ class СategoriesListViewController: UIViewController {
         
         viewModel.fetch { [weak self] in
             guard let strongSelf = self else { return }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                strongSelf.loadingInducator.stopAnimating()
-                strongSelf.setUpCollectionView()
-                strongSelf.collectionView.reloadData()
-            }
+            strongSelf.loadingInducator.stopAnimating()
+            strongSelf.setUpCollectionView()
+            strongSelf.collectionView.reloadData()
         }
         
         showErrorToast()
@@ -65,26 +64,6 @@ class СategoriesListViewController: UIViewController {
         view.addSubview(loadingInducator)
     }
     
-    private func showErrorToast() {
-        viewModel.errorPublisher.sink { error in
-            guard let error = error else { return }
-            self.showToast(with: error)
-        }.store(in: &self.observers)
-    }
-    
-    private func setUpRefreshControl() {
-        imageRefreshControl.addTarget(self, action: #selector(refreshCollectionView), for: .valueChanged)
-        collectionView.refreshControl = imageRefreshControl
-    }
-    
-    @objc func refreshCollectionView() {
-        viewModel.fetch { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.collectionView.reloadData()
-            strongSelf.imageRefreshControl.endRefreshing()
-        }
-    }
-    
     private func setUpNavigationController() {
         navigationItem.title = "The New York Times"
         navigationController?.navigationBar.largeTitleTextAttributes = [.font: UIFont.systemFont(ofSize: UIScreen.main.bounds.height < 750 ? 33 : 36, weight: .black)]
@@ -99,6 +78,11 @@ class СategoriesListViewController: UIViewController {
         
         loadingInducator.startAnimating()
         loadingInducator.hidesWhenStopped = true
+    }
+    
+    private func setUpRefreshControl() {
+        refreshControl.addTarget(self, action: #selector(refreshCollectionView), for: .valueChanged)
+        collectionView.refreshControl = refreshControl
     }
     
     private func setUpCollectionView() {
@@ -128,7 +112,25 @@ class СategoriesListViewController: UIViewController {
         layout.minimumLineSpacing = 10
         layout.itemSize = CGSize(width: itemWidth, height: itemWidth + 10)
         layout.sectionInset = sectionInserts
+        
     }
+    
+    private func showErrorToast() {
+        viewModel.errorPublisher.sink { error in
+            guard let error = error else { return }
+            self.showToast(with: error)
+        }
+        .store(in: &self.observers)
+    }
+    
+    @objc func refreshCollectionView() {
+        viewModel.fetch { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.collectionView.reloadData()
+            strongSelf.refreshControl.endRefreshing()
+        }
+    }
+    
 }
 
 extension СategoriesListViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
@@ -143,12 +145,13 @@ extension СategoriesListViewController: UICollectionViewDataSource, UICollectio
         let category = viewModel.data?[indexPath.item]
         cell.viewModel = CategoryCollectionViewCellModel(data: category)
         cell.configure()
+        
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let category = viewModel.data?[indexPath.item] else { return }
-        let viewModel1 = BooksListViewModel(listNameEncoded: category.listNameEncoded, listName: category.listName)
-        let booksListVC = BooksListViewController(viewModel: viewModel1)
+        let booksListViewModel = BooksListViewModel(listNameEncoded: category.listNameEncoded, listName: category.listName)
+        let booksListVC = BooksListViewController(viewModel: booksListViewModel)
         navigationController?.pushViewController(booksListVC, animated: true)
     }
 }

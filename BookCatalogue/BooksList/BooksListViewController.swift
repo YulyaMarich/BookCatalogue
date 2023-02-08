@@ -35,10 +35,9 @@ class BooksListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(red: 0.973, green: 0.957, blue: 0.930, alpha: 1)
-addSubviews()
-        setUpActivityIndicator()
+        addSubviews()
         setUpNavigationController()
+        setUpActivityIndicator()
         setUpRefreshControl()
         viewModel.fetch { [weak self] in
             guard let strongSelf = self else { return }
@@ -58,11 +57,18 @@ addSubviews()
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func addSubviews() {
+        view.addSubview(collectionView)
+        view.addSubview(loadingInducator)
+    }
+    
     private func setUpNavigationController() {
         navigationItem.largeTitleDisplayMode = .never
         navigationController?.navigationBar.tintColor = .black
         navigationItem.title = viewModel.listName
         UILabel.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).adjustsFontSizeToFitWidth = true
+        
+        view.backgroundColor = UIColor(red: 0.973, green: 0.957, blue: 0.930, alpha: 1)
     }
     
     private func showErrorToast() {
@@ -70,19 +76,6 @@ addSubviews()
             guard let error = error else { return }
             self.showToast(with: error)
         }.store(in: &self.observers)
-    }
-    
-    private func setUpRefreshControl() {
-        refreshControl.addTarget(self, action: #selector(refreshCollectionView), for: .valueChanged)
-        collectionView.refreshControl = refreshControl
-    }
-    
-    @objc func refreshCollectionView() {
-        viewModel.fetch { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.collectionView.reloadData()
-            strongSelf.refreshControl.endRefreshing()
-        }
     }
     
     private func setUpActivityIndicator() {
@@ -94,9 +87,9 @@ addSubviews()
         loadingInducator.hidesWhenStopped = true
     }
     
-    private func addSubviews() {
-        view.addSubview(collectionView)
-        view.addSubview(loadingInducator)
+    private func setUpRefreshControl() {
+        refreshControl.addTarget(self, action: #selector(refreshCollectionView), for: .valueChanged)
+        collectionView.refreshControl = refreshControl
     }
     
     private func setUpCollectionView() {
@@ -125,6 +118,14 @@ addSubviews()
         layout.minimumLineSpacing = 10
         layout.itemSize = CGSize(width: itemWidth, height: itemWidth - 100)
         layout.sectionInset = sectionInserts
+    }
+    
+    @objc func refreshCollectionView() {
+        viewModel.fetch { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.collectionView.reloadData()
+            strongSelf.refreshControl.endRefreshing()
+        }
     }
 }
 

@@ -9,6 +9,7 @@ import UIKit
 import Combine
 
 class BookCollectionViewCell: UICollectionViewCell {
+    
     var viewModel: BookCollectionViewCellModelProtocol?
     
     private lazy var viewBackground: UIView = {
@@ -74,99 +75,16 @@ class BookCollectionViewCell: UICollectionViewCell {
     let pressBuyBookButton = PassthroughSubject<URL, Never>()
     
     func configure() {
-        setUpImageView()
+        contentView.makeShadowWith()
         addSubviews()
-        setUpConstraints()
-        setUpAuthorAndPublisherStack()
-        makeShadow(to: contentView)
         setUpContentView()
+        setUpConstraints()
+        setUpImageView()
+        setUpAuthorAndPublisherStack()
         setUpBookTitleLabel()
         setUpBookDescriptionLabel()
         setUpBuyBookButton()
         setUpRankView()
-    }
-    
-    private func setUpContentView() {
-        contentView.backgroundColor = .white
-        contentView.layer.cornerRadius = 4
-        
-        divider.backgroundColor = UIColor(red: 0.353, green: 0.294, blue: 0.267, alpha: 1)
-    }
-    
-    private func setUpRankView() {
-        rankLabel.text = "\(viewModel?.rank ?? 0)"
-        rankLabel.font = UIFont.systemFont(ofSize: 20, weight: .black)
-        rankLabel.adjustsFontSizeToFitWidth = true
-        rankLabel.textAlignment = .center
-        rankBackgroundView.backgroundColor = .white
-        makeShadow(to: rankBackgroundView)
-    }
-    
-    private func setUpBuyBookButton() {
-        buyBookButton.backgroundColor = UIColor(red: 0.353, green: 0.294, blue: 0.267, alpha: 1)
-        buyBookButton.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .black)
-        buyBookButton.setTitle("BUY".localized(), for: .normal)
-        buyBookButton.layer.cornerRadius = 4
-        buyBookButton.showsMenuAsPrimaryAction = true
-        
-        buyBookButton.menu = UIMenu(children: createUIAtion())
-    }
-    
-    private func createUIAtion() -> [UIAction] {
-        var actions: [UIAction] = []
-        
-        if let links = viewModel?.buyLinks {
-            for bookLink in links {
-                let action = UIAction(title: bookLink.name) { _ in
-                    self.openShop(on: bookLink.url)
-                }
-                actions.append(action)
-            }
-        }
-        return actions
-    }
-    
-    private func openShop(on link: String?) {
-        guard let stringURl = link, let url = URL(string: stringURl) else { return }
-        pressBuyBookButton.send(url)
-    }
-    
-    private func setUpBookTitleLabel() {
-        bookTitleLabel.text = viewModel?.title
-        bookTitleLabel.font = UIFont.systemFont(ofSize: 20, weight: .black)
-        bookTitleLabel.numberOfLines = 0
-    }
-    
-    private func setUpBookDescriptionLabel() {
-        bookDescriptionLabel.text = viewModel?.description
-        bookDescriptionLabel.numberOfLines = 0
-        bookDescriptionLabel.font = UIFont.systemFont(ofSize: 13)
-    }
-    
-    private func setUpImageView() {
-        self.tag = viewModel?.indexPath.item ?? 0
-        bookImageView.isHidden = true
-        activityIndicator.startAnimating()
-        if let imageURL = viewModel?.bookImage {
-            if let image = viewModel?.cacheManager.getImageFromCache(for: imageURL) {
-                    self.bookImageView.image = image
-                    self.bookImageView.isHidden = false
-                    self.activityIndicator.stopAnimating()
-            } else {
-                DispatchQueue.global().async {
-                    guard let url = URL(string: imageURL) else { return }
-                    guard let data = try? Data(contentsOf: url) else { return }
-                    DispatchQueue.main.async {
-                        if self.tag == self.viewModel?.indexPath.item {
-                            self.viewModel?.cacheManager.saveDataToCache(data: data, for: imageURL)
-                            self.bookImageView.image = UIImage(data: data)
-                            self.activityIndicator.stopAnimating()
-                            self.bookImageView.isHidden = false
-                        }
-                    }
-                }
-            }
-        }
     }
     
     private func addSubviews() {
@@ -182,6 +100,13 @@ class BookCollectionViewCell: UICollectionViewCell {
         authorAndPublisherStack.addArrangedSubview(authorLabel)
         authorAndPublisherStack.addArrangedSubview(publisherLabel)
         viewBackground.addSubview(divider)
+    }
+    
+    private func setUpContentView() {
+        contentView.backgroundColor = .white
+        contentView.layer.cornerRadius = 4
+        
+        divider.backgroundColor = UIColor(red: 0.353, green: 0.294, blue: 0.267, alpha: 1)
     }
     
     private func setUpConstraints() {
@@ -249,6 +174,34 @@ class BookCollectionViewCell: UICollectionViewCell {
         bookDescriptionLabel.bottomAnchor.constraint(lessThanOrEqualTo: viewBackground.bottomAnchor).isActive = true
     }
     
+    private func setUpImageView() {
+        bookImageView.makeShadowWith()
+        bookImageView.contentMode = .scaleAspectFit
+        self.tag = viewModel?.indexPath.item ?? 0
+        bookImageView.isHidden = true
+        activityIndicator.startAnimating()
+        if let imageURL = viewModel?.bookImage {
+            if let image = viewModel?.cacheManager.getImageFromCache(for: imageURL) {
+                    self.bookImageView.image = image
+                    self.bookImageView.isHidden = false
+                    self.activityIndicator.stopAnimating()
+            } else {
+                DispatchQueue.global().async {
+                    guard let url = URL(string: imageURL) else { return }
+                    guard let data = try? Data(contentsOf: url) else { return }
+                    DispatchQueue.main.async {
+                        if self.tag == self.viewModel?.indexPath.item {
+                            self.viewModel?.cacheManager.saveDataToCache(data: data, for: imageURL)
+                            self.bookImageView.image = UIImage(data: data)
+                            self.activityIndicator.stopAnimating()
+                            self.bookImageView.isHidden = false
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     func setUpAuthorAndPublisherStack() {
         authorAndPublisherStack.axis = .vertical
         authorAndPublisherStack.spacing = 0
@@ -265,10 +218,53 @@ class BookCollectionViewCell: UICollectionViewCell {
         publisherLabel.numberOfLines = 0
     }
     
-    private func makeShadow(to someView: UIView) {
-        someView.layer.shadowOffset = CGSize(width: 0, height: 0)
-        someView.layer.shadowRadius = 3
-        someView.layer.shadowColor = UIColor.black.cgColor
-        someView.layer.shadowOpacity = 0.3
+    private func setUpBookTitleLabel() {
+        bookTitleLabel.text = viewModel?.title
+        bookTitleLabel.font = UIFont.systemFont(ofSize: 20, weight: .black)
+        bookTitleLabel.numberOfLines = 0
+    }
+    
+    private func setUpBookDescriptionLabel() {
+        bookDescriptionLabel.text = viewModel?.description
+        bookDescriptionLabel.numberOfLines = 0
+        bookDescriptionLabel.font = UIFont.systemFont(ofSize: 13)
+    }
+    
+    private func setUpBuyBookButton() {
+        buyBookButton.backgroundColor = UIColor(red: 0.353, green: 0.294, blue: 0.267, alpha: 1)
+        buyBookButton.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .black)
+        buyBookButton.setTitle("BUY".localized(), for: .normal)
+        buyBookButton.layer.cornerRadius = 4
+        buyBookButton.showsMenuAsPrimaryAction = true
+        
+        buyBookButton.menu = UIMenu(children: createUIAtion())
+    }
+    
+    private func setUpRankView() {
+        rankLabel.text = "\(viewModel?.rank ?? 0)"
+        rankLabel.font = UIFont.systemFont(ofSize: 20, weight: .black)
+        rankLabel.adjustsFontSizeToFitWidth = true
+        rankLabel.textAlignment = .center
+        rankBackgroundView.backgroundColor = .white
+        rankBackgroundView.makeShadowWith()
+    }
+    
+    private func createUIAtion() -> [UIAction] {
+        var actions: [UIAction] = []
+        
+        if let links = viewModel?.buyLinks {
+            for bookLink in links {
+                let action = UIAction(title: bookLink.name) { _ in
+                    self.openShop(on: bookLink.url)
+                }
+                actions.append(action)
+            }
+        }
+        return actions
+    }
+    
+    private func openShop(on link: String?) {
+        guard let stringURl = link, let url = URL(string: stringURl) else { return }
+        pressBuyBookButton.send(url)
     }
 }

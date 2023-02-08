@@ -8,6 +8,7 @@
 import UIKit
 
 extension UIViewController {
+    
     func showToast(with message: String) {
         let toastLabel = UILabel()
         let width = view.frame.width / 1.2
@@ -25,7 +26,10 @@ extension UIViewController {
         toastLabel.clipsToBounds = true
         
         self.view.addSubview(toastLabel)
-        UIView.animate(withDuration: 0.3, delay: 0.1, options: .curveEaseIn, animations: {
+        UIView.animate(withDuration: 0.3,
+                       delay: 0.1,
+                       options: .curveEaseIn,
+                       animations: {
             toastLabel.frame = CGRect(x: (self.view.frame.size.width - width) / 2,
                                       y: self.view.frame.size.height - 100,
                                       width: width,
@@ -33,7 +37,10 @@ extension UIViewController {
         }, completion: { done in
             if done {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    UIView.animate(withDuration: 0.3, delay: 0.1, options: .curveEaseIn, animations: {
+                    UIView.animate(withDuration: 0.3,
+                                   delay: 0.1,
+                                   options: .curveEaseIn,
+                                   animations: {
                         toastLabel.frame = CGRect(x: (self.view.frame.size.width - width) / 2,
                                                   y: self.view.frame.size.height,
                                                   width: width,
@@ -48,7 +55,3 @@ extension UIViewController {
         })
     }
 }
-                       
-                    
-
-                       

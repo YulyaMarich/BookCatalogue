@@ -9,7 +9,8 @@ import Foundation
 import Combine
 
 protocol BooksListViewModelProtocol {
-    var networkManager: NetworkManager { get }
+    
+    var networkManager: NetworkService { get }
     var listName: String { get }
     var listNameEncoded: String { get }
     var data: [Book]? { get set }
@@ -19,21 +20,24 @@ protocol BooksListViewModelProtocol {
 }
 
 class BooksListViewModel: BooksListViewModelProtocol {
-    var errorPublisher = CurrentValueSubject<String?, Never> (nil)
-
-    init(listNameEncoded: String, listName: String) {
+    
+    init(listNameEncoded: String, listName: String, networkManager: NetworkService = NetworkManager()) {
         self.listNameEncoded = listNameEncoded
         self.listName = listName
+        self.networkManager = networkManager
     }
+    
+    var networkManager: NetworkService
+ 
+    var errorPublisher = CurrentValueSubject<String?, Never> (nil)
+
     
     var listNameEncoded: String
     
     var data: [Book]?
     
     var listName: String
-    
-    var networkManager = NetworkManager()
-    
+
     func fetch(completion: @escaping () -> Void) {
         networkManager.request(type: .booksList(listNameEncoded), decodable: BooksList.self) { result in
             switch result {

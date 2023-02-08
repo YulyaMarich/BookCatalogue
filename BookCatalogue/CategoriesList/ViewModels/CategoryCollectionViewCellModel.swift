@@ -8,6 +8,7 @@
 import Foundation
 
 protocol CategoryCollectionViewCellModelProtocol {
+    
     var data: Category? { get }
     var listName: String { get }
     var updated: String { get }
@@ -15,6 +16,11 @@ protocol CategoryCollectionViewCellModelProtocol {
 }
 
 class CategoryCollectionViewCellModel: CategoryCollectionViewCellModelProtocol {
+    
+    init(data: Category?) {
+        self.data = data
+    }
+    
     var listName: String {
         data?.listName ?? "No info"
     }
@@ -28,8 +34,4 @@ class CategoryCollectionViewCellModel: CategoryCollectionViewCellModelProtocol {
     }
     
     var data: Category?
-    
-    init(data: Category?) {
-        self.data = data
-    }
 }
