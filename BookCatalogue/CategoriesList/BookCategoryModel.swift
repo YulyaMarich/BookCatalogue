@@ -16,5 +16,11 @@ struct Category: Codable {
     let updated: String
     let newestPublishedDate: String
     let listNameEncoded: String
+    
+    enum CodingKeys: String, CodingKey {
+        case listName = "list_name"
+        case updated
+        case newestPublishedDate = "newest_published_date"
+        case listNameEncoded = "list_name_encoded"
+    }
 }
-

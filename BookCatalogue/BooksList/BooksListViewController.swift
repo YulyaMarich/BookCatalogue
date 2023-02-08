@@ -40,6 +40,7 @@ class BooksListViewController: UIViewController {
             guard let strongSelf = self else { return }
             strongSelf.collectionView.reloadData()
         }
+        showErrorToast()
     }
     
     init(viewModel: BooksListViewModelProtocol) {
@@ -49,6 +50,13 @@ class BooksListViewController: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func showErrorToast() {
+        viewModel.errorPublisher.sink { error in
+            guard let error = error else { return }
+            self.showToast(with: error)
+        }.store(in: &self.observers)
     }
     
     private func setUpRefreshControl() {

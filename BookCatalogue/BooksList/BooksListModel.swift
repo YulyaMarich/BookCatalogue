@@ -22,8 +22,17 @@ struct Book: Codable {
     let publisher: String
     let bookImage: String
     let rank: Int
-    let amazonProductUrl: String
     let buyLinks: [Link]
+    
+    enum CodingKeys: String, CodingKey {
+        case title
+        case description
+        case author
+        case publisher
+        case bookImage = "book_image"
+        case rank
+        case buyLinks = "buy_links"
+    }
 }
 
 struct Link: Codable {

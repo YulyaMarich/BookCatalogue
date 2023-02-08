@@ -29,20 +29,17 @@ class NetworkManager {
         
         cacheManager.getDataFromCache(for: url, decodable: decodable, completion: completion)
         
-        AF.request(url, method: .get, parameters: parameters, encoding: URLEncoding(destination: .queryString)).responseDecodable(of: decodable) { [weak self] response in
-            guard let data = response.data else { return }
-            
-            do {
-                self?.cacheManager.saveDataToCache(data: data, for: url)
-    
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let data = try decoder.decode(decodable, from: data)
+        let request = AF.request(url, method: .get, parameters: parameters, encoding: URLEncoding(destination: .queryString))
+        request.responseDecodable(of: decodable) { [ weak self ] response in
+          
+            switch response.result {
+                   case .failure(let error):
+                completion(.failure(error))
+                   case .success(let data):
+                guard let responseData = response.data else { return }
+                self?.cacheManager.saveDataToCache(data: responseData, for: url)
                 completion(.success(data))
-            } catch let jsonError {
-                print("error : \(jsonError)")
-                completion(.failure(jsonError))
-            }
+                }
         }
     }
 }
