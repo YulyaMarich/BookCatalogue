@@ -30,15 +30,12 @@ class BooksListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.largeTitleDisplayMode = .never
-        navigationController?.navigationBar.tintColor = .black
-        navigationItem.title = viewModel.listName
-        UILabel.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).adjustsFontSizeToFitWidth = true
-        setUpCollectionView()
+        setUpNavigationController()
         setUpRefreshControl()
         viewModel.fetch { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.collectionView.reloadData()
+            strongSelf.setUpCollectionView()
         }
         showErrorToast()
     }
@@ -50,6 +47,13 @@ class BooksListViewController: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setUpNavigationController() {
+        navigationItem.largeTitleDisplayMode = .never
+        navigationController?.navigationBar.tintColor = .black
+        navigationItem.title = viewModel.listName
+        UILabel.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).adjustsFontSizeToFitWidth = true
     }
     
     private func showErrorToast() {
@@ -65,8 +69,11 @@ class BooksListViewController: UIViewController {
     }
     
     @objc func refreshCollectionView() {
-        collectionView.reloadData()
-        refreshControl.endRefreshing()
+        viewModel.fetch { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.collectionView.reloadData()
+            strongSelf.refreshControl.endRefreshing()
+        }
     }
     
     private func setUpCollectionView() {
@@ -118,7 +125,7 @@ extension BooksListViewController: UICollectionViewDataSource, UICollectionViewD
         }.store(in: &observers)
         
         cell.configure()
-
+        
         return cell
     }
 }

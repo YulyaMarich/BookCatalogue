@@ -145,12 +145,14 @@ class BookCollectionViewCell: UICollectionViewCell {
     
     private func setUpImageView() {
         self.tag = viewModel?.indexPath.item ?? 0
+        bookImageView.isHidden = true
+        activityIndicator.startAnimating()
         if let imageURL = viewModel?.bookImage {
             if let image = viewModel?.cacheManager.getImageFromCache(for: imageURL) {
-                self.bookImageView.image = image
+                    self.bookImageView.image = image
+                    self.bookImageView.isHidden = false
+                    self.activityIndicator.stopAnimating()
             } else {
-                bookImageView.isHidden = true
-                activityIndicator.startAnimating()
                 DispatchQueue.global().async {
                     guard let url = URL(string: imageURL) else { return }
                     guard let data = try? Data(contentsOf: url) else { return }
