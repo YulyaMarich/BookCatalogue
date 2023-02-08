@@ -26,6 +26,7 @@ extension UIViewController {
         toastLabel.clipsToBounds = true
         
         self.view.addSubview(toastLabel)
+        
         UIView.animate(withDuration: 0.3,
                        delay: 0.1,
                        options: .curveEaseIn,

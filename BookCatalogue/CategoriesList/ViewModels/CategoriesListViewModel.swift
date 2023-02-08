@@ -9,8 +9,7 @@ import Foundation
 import Combine
 
 protocol CategoriesListViewModelProtocol {
-    
-    var networkManager: NetworkService { get }
+
     var data: [Category]? { get set }
     var errorPublisher: CurrentValueSubject<String?, Never> { get }
 
@@ -19,14 +18,15 @@ protocol CategoriesListViewModelProtocol {
 
 class CategoriesListViewModel: CategoriesListViewModelProtocol {
     
-    init(networkManager: NetworkService = NetworkManager()) {
-        self.networkManager = networkManager
-    }
-    var networkManager: NetworkService
+    private var networkManager: NetworkService
     
     var errorPublisher = CurrentValueSubject<String?, Never> (nil)
 
     var data: [Category]?
+    
+    init(networkManager: NetworkService = NetworkManager()) {
+        self.networkManager = networkManager
+    }
     
     func fetch(completion: @escaping () -> Void) {
         networkManager.request(type: .categoriesList, decodable: CategoriesList.self) { result in
@@ -36,7 +36,6 @@ class CategoriesListViewModel: CategoriesListViewModelProtocol {
                 completion()
             case .failure(let failure):
                 self.errorPublisher.value = failure.asAFError?.underlyingError?.localizedDescription
-                print(failure.localizedDescription)
             }
         }
     }

@@ -20,11 +20,9 @@ class CacheManager: CacheService {
         if let data = realm.cacheData(forURLString: url) {
             do {
                 let decoder = JSONDecoder()
-                
                 let data = try decoder.decode(decodable, from: data)
                 
                 completion(.success(data))
-                
             } catch {
                 completion(.failure(error))
             }

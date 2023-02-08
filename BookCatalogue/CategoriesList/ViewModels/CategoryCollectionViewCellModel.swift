@@ -17,21 +17,21 @@ protocol CategoryCollectionViewCellModelProtocol {
 
 class CategoryCollectionViewCellModel: CategoryCollectionViewCellModelProtocol {
     
-    init(data: Category?) {
-        self.data = data
-    }
-    
     var listName: String {
-        data?.listName ?? "No info"
+        data?.listName ?? "No info".localized()
     }
     
     var updated: String {
-        data?.updated.localized() ?? "Mo info"
+        data?.updated.localized() ?? "No info".localized()
     }
     
     var newestPublishedDate: String {
-        data?.newestPublishedDate ?? "No info"
+        data?.newestPublishedDate ?? "No info".localized()
     }
     
     var data: Category?
+    
+    init(data: Category?) {
+        self.data = data
+    }
 }

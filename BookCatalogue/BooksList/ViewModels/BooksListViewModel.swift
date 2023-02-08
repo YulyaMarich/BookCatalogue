@@ -10,9 +10,7 @@ import Combine
 
 protocol BooksListViewModelProtocol {
     
-    var networkManager: NetworkService { get }
     var listName: String { get }
-    var listNameEncoded: String { get }
     var data: [Book]? { get set }
     var errorPublisher: CurrentValueSubject<String?, Never> { get }
     
@@ -20,23 +18,22 @@ protocol BooksListViewModelProtocol {
 }
 
 class BooksListViewModel: BooksListViewModelProtocol {
+        
+    private var networkManager: NetworkService
+    
+    private var listNameEncoded: String
+ 
+    var errorPublisher = CurrentValueSubject<String?, Never> (nil)
+    
+    var data: [Book]?
+    
+    var listName: String
     
     init(listNameEncoded: String, listName: String, networkManager: NetworkService = NetworkManager()) {
         self.listNameEncoded = listNameEncoded
         self.listName = listName
         self.networkManager = networkManager
     }
-    
-    var networkManager: NetworkService
- 
-    var errorPublisher = CurrentValueSubject<String?, Never> (nil)
-
-    
-    var listNameEncoded: String
-    
-    var data: [Book]?
-    
-    var listName: String
 
     func fetch(completion: @escaping () -> Void) {
         networkManager.request(type: .booksList(listNameEncoded), decodable: BooksList.self) { result in
@@ -46,7 +43,6 @@ class BooksListViewModel: BooksListViewModelProtocol {
                 completion()
             case .failure(let failure):
                 self.errorPublisher.value = failure.asAFError?.underlyingError?.localizedDescription
-                print(failure)
             }
         }
     }
