@@ -13,11 +13,11 @@ fileprivate struct NetworkConstants {
     static let categoriesListApiPath = "names"
 }
 
-class NetworkManager {
+class NetworkManager: NetworkService {
     
     private let key = "GmLTWtiAwPIGXu0QdqSZGznq3TJR2Hy2"
     
-    private let cacheManager: CacheService
+    let cacheManager: CacheService
     
     init(cacheManager: CacheService = CacheManager()) {
         self.cacheManager = cacheManager
@@ -31,15 +31,15 @@ class NetworkManager {
         
         let request = AF.request(url, method: .get, parameters: parameters, encoding: URLEncoding(destination: .queryString))
         request.responseDecodable(of: decodable) { [ weak self ] response in
-          
+            
             switch response.result {
-                   case .failure(let error):
+            case .failure(let error):
                 completion(.failure(error))
-                   case .success(let data):
+            case .success(let data):
                 guard let responseData = response.data else { return }
                 self?.cacheManager.saveDataToCache(data: responseData, for: url)
                 completion(.success(data))
-                }
+            }
         }
     }
 }

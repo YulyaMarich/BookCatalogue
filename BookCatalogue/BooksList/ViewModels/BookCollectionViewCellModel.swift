@@ -8,6 +8,7 @@
 import Foundation
 
 protocol BookCollectionViewCellModelProtocol {
+    
     var data: Book? { get }
     var cacheManager: CacheService { get }
     var title: String { get }
@@ -22,6 +23,12 @@ protocol BookCollectionViewCellModelProtocol {
 
 class BookCollectionViewCellModel: BookCollectionViewCellModelProtocol {
 
+    init(data: Book?, indexPath: IndexPath, cacheManager: CacheService = CacheManager()) {
+        self.data = data
+        self.indexPath = indexPath
+        self.cacheManager = cacheManager
+    }
+    
     var buyLinks: [Link] {
         data?.buyLinks ?? []
     }
@@ -55,10 +62,4 @@ class BookCollectionViewCellModel: BookCollectionViewCellModelProtocol {
     }
     
     let data: Book?
-    
-    init(data: Book?, indexPath: IndexPath, cacheManager: CacheService = CacheManager()) {
-        self.data = data
-        self.indexPath = indexPath
-        self.cacheManager = cacheManager
-    }
 }

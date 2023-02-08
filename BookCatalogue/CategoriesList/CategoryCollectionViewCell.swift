@@ -8,6 +8,7 @@
 import UIKit
 
 class CategoryCollectionViewCell: UICollectionViewCell {
+    
     private lazy var categoryNameLabel: UILabel = {
         let categoryNameLabel = UILabel()
         return categoryNameLabel
@@ -36,13 +37,18 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     var viewModel: CategoryCollectionViewCellModelProtocol?
     
     func configure() {
-        contentView.backgroundColor = .white
-        contentView.layer.cornerRadius = 4
+        setUpContentView()
         addSubviews()
         setUpConstraints()
         setUpCategoryNameLabel()
         setUpCategoryInfoStack()
-        makeShadow()
+    }
+    
+    private func setUpContentView() {
+        contentView.backgroundColor = .white
+        contentView.layer.cornerRadius = 4
+        contentView.makeShadowWith()
+        
         divider.backgroundColor = UIColor(red: 0.353, green: 0.294, blue: 0.267, alpha: 1)
     }
     
@@ -96,18 +102,10 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         
         let resultAttributeString = NSAttributedString(string: result.localized(),
                                               attributes: resultAttributes)
-        
         let mutableAttributedString = NSMutableAttributedString(string: parameter.localized(),
                                                                 attributes: parameterAttributes)
         mutableAttributedString.append(resultAttributeString)
         
         return mutableAttributedString
-    }
-    
-    private func makeShadow() {
-        self.layer.shadowOffset = CGSize(width: 0, height: 0)
-        self.layer.shadowRadius = 3
-        self.layer.shadowColor = UIColor.black.cgColor
-        self.layer.shadowOpacity = 0.3
     }
 }

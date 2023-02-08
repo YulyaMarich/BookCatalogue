@@ -8,12 +8,6 @@
 import Foundation
 import UIKit
 
-protocol CacheService {
-    func getDataFromCache<T: Codable>(for url: String, decodable: T.Type, completion: @escaping (Result<T, Error>) -> Void)
-    func saveDataToCache(data: Data, for url: String)
-    func getImageFromCache(for url: String) -> UIImage?
-}
-
 class CacheManager: CacheService {
     
     private let realm: Cacheble
