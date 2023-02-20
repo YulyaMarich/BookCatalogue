@@ -9,11 +9,11 @@ import Foundation
 import Combine
 
 protocol CategoriesListViewModelProtocol {
-
-    var data: [Category]? { get set }
+    
     var errorPublisher: CurrentValueSubject<String?, Never> { get }
-
-    func fetch(completion: @escaping() -> Void)
+    var dataPublisher: CurrentValueSubject<[Category]?, Never> { get }
+    
+    func fetch()
 }
 
 class CategoriesListViewModel: CategoriesListViewModelProtocol {
@@ -21,19 +21,18 @@ class CategoriesListViewModel: CategoriesListViewModelProtocol {
     private var networkManager: NetworkService
     
     var errorPublisher = CurrentValueSubject<String?, Never> (nil)
-
-    var data: [Category]?
+    
+    var dataPublisher =  CurrentValueSubject<[Category]?, Never> (nil)
     
     init(networkManager: NetworkService = NetworkManager()) {
         self.networkManager = networkManager
     }
     
-    func fetch(completion: @escaping () -> Void) {
+    func fetch() {
         networkManager.request(type: .categoriesList, decodable: CategoriesList.self) { result in
             switch result {
             case .success(let success):
-                self.data = success.results
-                completion()
+                self.dataPublisher.value = success.results
             case .failure(let failure):
                 self.errorPublisher.value = failure.asAFError?.underlyingError?.localizedDescription
             }
