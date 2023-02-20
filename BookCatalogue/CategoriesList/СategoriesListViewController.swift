@@ -56,14 +56,9 @@ class СategoriesListViewController: UIViewController {
         setUpNavigationController()
         setUpActivityIndicator()
         setUpRefreshControl()
+        viewModel.fetch()
         
-        viewModel.fetch { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.loadingInducator.stopAnimating()
-            strongSelf.setUpCollectionView()
-            strongSelf.collectionView.reloadData()
-        }
-        
+        observeData()
         observeErrorToast()
     }
     
@@ -121,6 +116,14 @@ class СategoriesListViewController: UIViewController {
         layout.sectionInset = sectionInsets
     }
     
+    private func observeData() {
+        viewModel.dataPublisher.sink { _ in
+            self.loadingInducator.stopAnimating()
+            self.setUpCollectionView()
+            self.collectionView.reloadData()
+        }.store(in: &observers)
+    }
+    
     private func observeErrorToast() {
         viewModel.errorPublisher.sink { error in
             guard let error = error else { return }
@@ -130,31 +133,31 @@ class СategoriesListViewController: UIViewController {
     }
     
     @objc private func refreshCollectionView() {
-        viewModel.fetch { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.collectionView.reloadData()
-            strongSelf.refreshControl.endRefreshing()
-        }
+        viewModel.fetch()
+        viewModel.dataPublisher.sink { _ in
+            self.collectionView.reloadData()
+            self.refreshControl.endRefreshing()
+        }.store(in: &observers)
     }
 }
 
 extension СategoriesListViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.data?.count ?? 0
+        return viewModel.dataPublisher.value?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellIdentifier,
                                                       for: indexPath) as! CategoryCollectionViewCell
-        let category = viewModel.data?[indexPath.item]
+        let category = viewModel.dataPublisher.value?[indexPath.item]
         cell.viewModel = CategoryCollectionViewCellModel(data: category)
         cell.configure()
         
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let category = viewModel.data?[indexPath.item] else { return }
+        guard let category = viewModel.dataPublisher.value?[indexPath.item] else { return }
         let booksListViewModel = BooksListViewModel(listNameEncoded: category.listNameEncoded, listName: category.listName)
         let booksListVC = BooksListViewController(viewModel: booksListViewModel)
         navigationController?.pushViewController(booksListVC, animated: true)

@@ -54,12 +54,8 @@ class BooksListViewController: UIViewController {
         setUpNavigationController()
         setUpActivityIndicator()
         setUpRefreshControl()
-        viewModel.fetch { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.loadingInducator.stopAnimating()
-            strongSelf.setUpCollectionView()
-            strongSelf.collectionView.reloadData()
-        }
+        viewModel.fetch()
+        observeData()
         
         observeErrorToast()
     }
@@ -76,13 +72,6 @@ class BooksListViewController: UIViewController {
         UILabel.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).adjustsFontSizeToFitWidth = true
         
         view.backgroundColor = .backgroundColor
-    }
-    
-    private func observeErrorToast() {
-        viewModel.errorPublisher.sink { error in
-            guard let error = error else { return }
-            self.showToast(with: error)
-        }.store(in: &self.observers)
     }
     
     private func setUpActivityIndicator() {
@@ -125,25 +114,40 @@ class BooksListViewController: UIViewController {
         layout.sectionInset = sectionInserts
     }
     
+    private func observeData() {
+        viewModel.dataPublisher.sink { _ in
+            self.loadingInducator.stopAnimating()
+            self.setUpCollectionView()
+            self.collectionView.reloadData()
+        }.store(in: &observers)
+    }
+    
+    private func observeErrorToast() {
+        viewModel.errorPublisher.sink { error in
+            guard let error = error else { return }
+            self.showToast(with: error)
+        }.store(in: &self.observers)
+    }
+    
     @objc func refreshCollectionView() {
-        viewModel.fetch { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.collectionView.reloadData()
-            strongSelf.refreshControl.endRefreshing()
-        }
+        viewModel.fetch()
+        viewModel.dataPublisher.sink { _ in
+            self.collectionView.reloadData()
+            self.refreshControl.endRefreshing()
+        }.store(in: &observers)
     }
 }
 
 extension BooksListViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.data?.count ?? 0
+        return viewModel.dataPublisher.value?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellIdentifier,
                                                       for: indexPath) as! BookCollectionViewCell
-        let book = viewModel.data?[indexPath.item]
+        let book = viewModel.dataPublisher.value?[indexPath.item]
         cell.viewModel = BookCollectionViewCellModel(data: book, indexPath: indexPath)
         
         cell.pressBuyBookButton.sink { url in
