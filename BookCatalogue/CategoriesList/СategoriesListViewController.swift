@@ -117,27 +117,25 @@ class СategoriesListViewController: UIViewController {
     }
     
     private func observeData() {
-        viewModel.dataPublisher.sink { _ in
-            self.loadingInducator.stopAnimating()
-            self.setUpCollectionView()
-            self.collectionView.reloadData()
+        viewModel.dataPublisher.sink { [weak self] _ in
+            guard let strongSelf = self else { return }
+            strongSelf.loadingInducator.stopAnimating()
+            strongSelf.setUpCollectionView()
+            strongSelf.collectionView.reloadData()
+            strongSelf.refreshControl.endRefreshing()
         }.store(in: &observers)
     }
     
     private func observeErrorToast() {
-        viewModel.errorPublisher.sink { error in
+        viewModel.errorPublisher.sink { [weak self] error in
             guard let error = error else { return }
-            self.showToast(with: error)
+            self?.showToast(with: error)
         }
         .store(in: &self.observers)
     }
     
     @objc private func refreshCollectionView() {
         viewModel.fetch()
-        viewModel.dataPublisher.sink { _ in
-            self.collectionView.reloadData()
-            self.refreshControl.endRefreshing()
-        }.store(in: &observers)
     }
 }
 
